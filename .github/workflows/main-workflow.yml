@@ -55,8 +55,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           
-      # --- THIS IS THE FIX ---
-      # This step ensures a modern Docker build environment is available
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -69,9 +67,14 @@ jobs:
           docker buildx build --platform linux/amd64 -t $ECR_REGISTRY/smartcommute-api-service:$IMAGE_TAG --load ./api-service
           echo "image=$ECR_REGISTRY/smartcommute-api-service:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      - name: Run Docker Scout Vulnerability Scan
-        run: |
-          docker scout cves ${{ steps.build-image.outputs.image }} --exit-code --only-severity critical,high
+      # --- THIS IS THE FIX ---
+      - name: Scan image with Docker Scout
+        uses: docker/scout-action@v1
+        with:
+          command: cves
+          image: ${{ steps.build-image.outputs.image }}
+          exit-code: true
+          only-severities: critical,high
 
       - name: Push image to ECR after successful scan
         run: docker push ${{ steps.build-image.outputs.image }}
@@ -108,7 +111,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           
-      # --- THIS IS THE FIX ---
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -121,9 +123,14 @@ jobs:
           docker buildx build --platform linux/amd64 -t $ECR_REGISTRY/smartcommute-processing-service:$IMAGE_TAG --load ./processing-service
           echo "image=$ECR_REGISTRY/smartcommute-processing-service:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      - name: Run Docker Scout Vulnerability Scan
-        run: |
-          docker scout cves ${{ steps.build-image.outputs.image }} --exit-code --only-severity critical,high
+      # --- THIS IS THE FIX ---
+      - name: Scan image with Docker Scout
+        uses: docker/scout-action@v1
+        with:
+          command: cves
+          image: ${{ steps.build-image.outputs.image }}
+          exit-code: true
+          only-severities: critical,high
 
       - name: Push image to ECR after successful scan
         run: docker push ${{ steps.build-image.outputs.image }}
@@ -160,7 +167,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # --- THIS IS THE FIX ---
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -173,9 +179,14 @@ jobs:
           docker buildx build --platform linux/amd64 -t $ECR_REGISTRY/smartcommute-nodered:$IMAGE_TAG --load ./node-red
           echo "image=$ECR_REGISTRY/smartcommute-nodered:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      - name: Run Docker Scout Vulnerability Scan
-        run: |
-          docker scout cves ${{ steps.build-image.outputs.image }} --exit-code --only-severity critical,high
+      # --- THIS IS THE FIX ---
+      - name: Scan image with Docker Scout
+        uses: docker/scout-action@v1
+        with:
+          command: cves
+          image: ${{ steps.build-image.outputs.image }}
+          exit-code: true
+          only-severities: critical,high
       
       - name: Push image to ECR after successful scan
         run: docker push ${{ steps.build-image.outputs.image }}
