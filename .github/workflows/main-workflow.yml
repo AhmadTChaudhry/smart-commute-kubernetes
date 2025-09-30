@@ -16,7 +16,7 @@ jobs:
   # This job builds, scans, and deploys the API service
   deploy-api-service:
     # Only run this job if changes were made in the 'api-service' directory
-    if: contains(github.event.head_commit.message, '[force deploy]') || contains(toJson(github.event.commits), 'api-service/')
+    if: "contains(github.event.head_commit.message, '[force deploy]') || contains(join(github.event.commits.*.modified), 'api-service/') || contains(join(github.event.commits.*.added), 'api-service/')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -55,7 +55,7 @@ jobs:
 
   # This job builds and deploys the Processing service
   deploy-processing-service:
-    if: contains(github.event.head_commit.message, '[force deploy]') || contains(toJson(github.event.commits), 'processing-service/')
+    if: "contains(github.event.head_commit.message, '[force deploy]') || contains(join(github.event.commits.*.modified), 'processing-service/') || contains(join(github.event.commits.*.added), 'processing-service/')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -90,7 +90,7 @@ jobs:
 
   # This job builds and deploys the Node-RED service
   deploy-node-red:
-    if: contains(github.event.head_commit.message, '[force deploy]') || contains(toJson(github.event.commits), 'node-red/')
+    if: "contains(github.event.head_commit.message, '[force deploy]') || contains(join(github.event.commits.*.modified), 'node-red/') || contains(join(github.event.commits.*.added), 'node-red/')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
