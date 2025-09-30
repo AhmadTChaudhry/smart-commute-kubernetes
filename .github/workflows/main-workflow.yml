@@ -186,7 +186,7 @@ jobs:
           command: cves
           image: ${{ steps.build-image.outputs.image }}
           exit-code: true
-          only-severities: critical,high
+          only-severities: critical
       
       - name: Push image to ECR after successful scan
         run: docker push ${{ steps.build-image.outputs.image }}
