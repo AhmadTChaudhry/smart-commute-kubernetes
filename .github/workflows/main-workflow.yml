@@ -50,14 +50,32 @@ jobs:
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push image to ECR
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Scout
+        uses: docker/scout-action@v1
+        with:
+          command: cves,recommendations
+
+      - name: Build and tag image
         id: build-image
         env:
           ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker buildx build --platform linux/amd64 -t $ECR_REGISTRY/smartcommute-api-service:$IMAGE_TAG --push ./api-service
+          docker buildx build --platform linux/amd64 -t $ECR_REGISTRY/smartcommute-api-service:$IMAGE_TAG --load ./api-service
           echo "image=$ECR_REGISTRY/smartcommute-api-service:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Run Docker Scout Vulnerability Scan
+        run: |
+          docker scout cves ${{ steps.build-image.outputs.image }} --exit-code --only-severity critical,high
+
+      - name: Push image to ECR
+        run: docker push ${{ steps.build-image.outputs.image }}
 
       - name: Set up Kubeconfig for EKS
         run: aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
@@ -85,14 +103,32 @@ jobs:
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push image to ECR
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Scout
+        uses: docker/scout-action@v1
+        with:
+          command: cves,recommendations
+
+      - name: Build and tag image
         id: build-image
         env:
           ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker buildx build --platform linux/amd64 -t $ECR_REGISTRY/smartcommute-processing-service:$IMAGE_TAG --push ./processing-service
+          docker buildx build --platform linux/amd64 -t $ECR_REGISTRY/smartcommute-processing-service:$IMAGE_TAG --load ./processing-service
           echo "image=$ECR_REGISTRY/smartcommute-processing-service:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Run Docker Scout Vulnerability Scan
+        run: |
+          docker scout cves ${{ steps.build-image.outputs.image }} --exit-code --only-severity critical,high
+
+      - name: Push image to ECR
+        run: docker push ${{ steps.build-image.outputs.image }}
 
       - name: Set up Kubeconfig for EKS
         run: aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
@@ -119,15 +155,33 @@ jobs:
 
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
+        
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build, tag, and push image to ECR
+      - name: Set up Docker Scout
+        uses: docker/scout-action@v1
+        with:
+          command: cves,recommendations
+
+      - name: Build and tag image
         id: build-image
         env:
           ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker buildx build --platform linux/amd64 -t $ECR_REGISTRY/smartcommute-nodered:$IMAGE_TAG --push ./node-red
+          docker buildx build --platform linux/amd64 -t $ECR_REGISTRY/smartcommute-nodered:$IMAGE_TAG --load ./node-red
           echo "image=$ECR_REGISTRY/smartcommute-nodered:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Run Docker Scout Vulnerability Scan
+        run: |
+          docker scout cves ${{ steps.build-image.outputs.image }} --exit-code --only-severity critical,high
+      
+      - name: Push image to ECR
+        run: docker push ${{ steps.build-image.outputs.image }}
 
       - name: Set up Kubeconfig for EKS
         run: aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
