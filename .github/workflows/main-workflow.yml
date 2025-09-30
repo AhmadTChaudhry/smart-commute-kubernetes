@@ -50,16 +50,11 @@ jobs:
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Log in to Docker Hub
+      - name: Log in to Docker Hub for Scout
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Set up Docker Scout
-        uses: docker/scout-action@v1
-        with:
-          command: cves,recommendations
 
       - name: Build and tag image
         id: build-image
@@ -74,7 +69,7 @@ jobs:
         run: |
           docker scout cves ${{ steps.build-image.outputs.image }} --exit-code --only-severity critical,high
 
-      - name: Push image to ECR
+      - name: Push image to ECR after successful scan
         run: docker push ${{ steps.build-image.outputs.image }}
 
       - name: Set up Kubeconfig for EKS
@@ -103,16 +98,11 @@ jobs:
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Log in to Docker Hub
+      - name: Log in to Docker Hub for Scout
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Set up Docker Scout
-        uses: docker/scout-action@v1
-        with:
-          command: cves,recommendations
 
       - name: Build and tag image
         id: build-image
@@ -127,7 +117,7 @@ jobs:
         run: |
           docker scout cves ${{ steps.build-image.outputs.image }} --exit-code --only-severity critical,high
 
-      - name: Push image to ECR
+      - name: Push image to ECR after successful scan
         run: docker push ${{ steps.build-image.outputs.image }}
 
       - name: Set up Kubeconfig for EKS
@@ -156,16 +146,11 @@ jobs:
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
         
-      - name: Log in to Docker Hub
+      - name: Log in to Docker Hub for Scout
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Set up Docker Scout
-        uses: docker/scout-action@v1
-        with:
-          command: cves,recommendations
 
       - name: Build and tag image
         id: build-image
@@ -180,7 +165,7 @@ jobs:
         run: |
           docker scout cves ${{ steps.build-image.outputs.image }} --exit-code --only-severity critical,high
       
-      - name: Push image to ECR
+      - name: Push image to ECR after successful scan
         run: docker push ${{ steps.build-image.outputs.image }}
 
       - name: Set up Kubeconfig for EKS
