@@ -10,7 +10,6 @@ permissions:
   contents: read
 
 jobs:
-  # This job runs first to determine which microservices have changed.
   filter:
     runs-on: ubuntu-latest
     outputs:
@@ -55,6 +54,11 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+          
+      # --- THIS IS THE FIX ---
+      # This step ensures a modern Docker build environment is available
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Build and tag image
         id: build-image
@@ -103,6 +107,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+          
+      # --- THIS IS THE FIX ---
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Build and tag image
         id: build-image
@@ -151,6 +159,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # --- THIS IS THE FIX ---
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Build and tag image
         id: build-image
