@@ -1,20 +1,12 @@
-# Stage 1: Use an official, lightweight Node.js runtime as the base
 FROM node:22-alpine
 
-# Set the working directory inside the container
 WORKDIR /usr/src/app
 
-# Copy package files and install dependencies first.
-# This is a key optimization: Docker will cache this layer, so dependencies
-# are only re-installed if package.json changes, not on every code change.
 COPY package*.json ./
 RUN npm install --production
 
-# Copy the rest of the application source code into the container
 COPY . .
 
-# Expose the port the app runs on. This is good practice for documentation.
 EXPOSE 3000
 
-# Define the command to start the application when the container launches
 CMD [ "node", "api-service.js" ]
