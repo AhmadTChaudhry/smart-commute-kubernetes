@@ -1,0 +1,50 @@
+services:
+  # The API Service - Serves the frontend and the /vehicles endpoint
+  api-service:
+    build: ./api-service
+    ports:
+      - "3000:3000"
+    depends_on:
+      mongo-db:
+        condition: service_healthy # This now waits for the health check to pass
+    environment:
+      - MONGO_URL=mongodb://mongo-db:27017
+
+  # The Processing Service - Listens to MQTT and writes to MongoDB
+  processing-service:
+    build: ./processing-service
+    depends_on:
+      mongo-db:
+        condition: service_healthy
+      node-red:
+        condition: service_started # No easy healthcheck for MQTT, so we wait for start
+    environment:
+      - MONGO_URL=mongodb://mongo-db:27017
+      - MQTT_BROKER_URL=mqtt://node-red:1883
+
+  # The Node-RED MQTT Broker - Now built from a custom Dockerfile
+  node-red:
+    build: ./node-red  # <-- CHANGED: Build our custom image
+    ports:
+      - "1883:1883"
+      - "1880:1880"
+    volumes:
+      - node-red-data:/data # <-- IMPROVED: Using a named volume for consistency
+
+  # The MongoDB Database - Now with a healthcheck
+  mongo-db:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck: # <-- ADDED: Healthcheck to ensure MongoDB is ready
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+volumes:
+  mongo-data:
+  node-red-data:

@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-red-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-red
+  template:
+    metadata:
+      labels:
+        app: node-red
+    spec:
+      containers:
+      - name: node-red
+        image: 706262410757.dkr.ecr.ap-southeast-2.amazonaws.com/smartcommute-nodered:latest
+        imagePullPolicy: Always
+        
+        # --- THE FINAL, SIMPLIFIED FIX ---
+        # We directly call the node-red command and pass our flow file as an argument.
+        command: ["node-red"]
+        args: ["--userDir", "/data", "/config/flows.json"]
+
+        ports:
+        - containerPort: 1883
+        - containerPort: 1880
+        
+        volumeMounts:
+        # Mount the flows.json file from the ConfigMap to a clean, predictable path.
+        - name: flows-config-volume
+          mountPath: /config/flows.json
+          subPath: flows.json
+
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+      
+      volumes:
+      - name: flows-config-volume
+        configMap:
+          name: nodered-flows
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-red-service
+spec:
+  type: NodePort
+  selector:
+    app: node-red
+  ports:
+    - name: mqtt
+      protocol: TCP
+      port: 1883
+      targetPort: 1883
+      nodePort: 30883
+    - name: ui
+      protocol: TCP
+      port: 1880
+      targetPort: 1880
+      nodePort: 30880

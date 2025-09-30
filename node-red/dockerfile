@@ -1,0 +1,11 @@
+# Start from the official, stable Node-RED image
+FROM nodered/node-red:latest
+
+# Switch to the root user to have permissions to install global packages
+USER root
+
+# Install the Aedes MQTT broker node using npm
+RUN npm install node-red-contrib-aedes
+
+# Switch back to the non-root 'node-red' user for better security
+USER node-red

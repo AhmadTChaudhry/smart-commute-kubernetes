@@ -1,0 +1,15 @@
+{
+  "name": "smart-commute-kubernetes",
+  "version": "1.0.0",
+  "description": "Scalable Public Transport Crowd Monitoring",
+  "main": "processing-service.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ahmad T Chaudhry",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^6.5.0",
+    "mqtt": "^5.5.0"
+  }
+}

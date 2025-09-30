@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SmartCommute Live Map</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { height: 100vh; width: 100vw; }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+    var map = L.map('map').setView([-37.8136, 144.9631], 12); // Centered on Melbourne
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    var vehicleMarkers = {};
+
+    async function updateMap() {
+        try {
+            const response = await fetch('/vehicles'); 
+            const vehicles = await response.json();
+
+            vehicles.forEach(vehicle => {
+                const { vehicleId, gps, passengerCount } = vehicle;
+                const position = [gps.lat, gps.lng];
+                
+                let color = 'green';
+                if (passengerCount > 25) color = 'orange';
+                if (passengerCount > 40) color = 'red';
+                
+                const customIcon = L.divIcon({
+                    html: `<div style="background-color:${color};width:25px;height:25px;border-radius:50%;border:2px solid white;display:flex;justify-content:center;align-items:center;color:white;font-weight:bold;">${passengerCount}</div>`,
+                    className: 'dummy'
+                });
+
+                if (vehicleMarkers[vehicleId]) {
+                    vehicleMarkers[vehicleId].setLatLng(position).setIcon(customIcon);
+                } else {
+                    vehicleMarkers[vehicleId] = L.marker(position, { icon: customIcon }).addTo(map)
+                        .bindPopup(`<b>Vehicle ID:</b> ${vehicleId}`);
+                }
+            });
+        } catch (error) {
+            console.error('Failed to fetch vehicle data:', error);
+        }
+    }
+
+    updateMap();
+    setInterval(updateMap, 5000);
+</script>
+</body>
+</html>
