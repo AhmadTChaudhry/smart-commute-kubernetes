@@ -67,7 +67,6 @@ jobs:
           docker buildx build --platform linux/amd64 -t $ECR_REGISTRY/smartcommute-api-service:$IMAGE_TAG --load ./api-service
           echo "image=$ECR_REGISTRY/smartcommute-api-service:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      # --- THIS IS THE FIX ---
       - name: Scan image with Docker Scout
         uses: docker/scout-action@v1
         with:
@@ -123,7 +122,6 @@ jobs:
           docker buildx build --platform linux/amd64 -t $ECR_REGISTRY/smartcommute-processing-service:$IMAGE_TAG --load ./processing-service
           echo "image=$ECR_REGISTRY/smartcommute-processing-service:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      # --- THIS IS THE FIX ---
       - name: Scan image with Docker Scout
         uses: docker/scout-action@v1
         with:
@@ -179,7 +177,6 @@ jobs:
           docker buildx build --platform linux/amd64 -t $ECR_REGISTRY/smartcommute-nodered:$IMAGE_TAG --load ./node-red
           echo "image=$ECR_REGISTRY/smartcommute-nodered:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      # --- THIS IS THE FIX ---
       - name: Scan image with Docker Scout
         uses: docker/scout-action@v1
         with:

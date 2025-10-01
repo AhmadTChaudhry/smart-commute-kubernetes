@@ -3,9 +3,7 @@ const { MongoClient } = require('mongodb');
 const path = require('path');
 
 // --- CONFIGURATION ---
-const PORT = 3000; // The port our API will run on
-
-// Private IP of SmartCommute-DB-Server instance.
+const PORT = 3000; 
 const MONGO_URL = process.env.MONGO_URL || 'mongodb://mongo-db:27017';
 const DB_NAME = 'smartcommute';
 const COLLECTION_NAME = 'vehicle_state';

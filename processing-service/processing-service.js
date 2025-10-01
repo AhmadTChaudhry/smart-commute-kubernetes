@@ -4,8 +4,6 @@ const { MongoClient } = require('mongodb');
 // --- CONFIGURATION ---
 const MQTT_BROKER_URL = process.env.MQTT_BROKER_URL || 'mqtt://node-red:1883';
 const MQTT_TOPIC = 'vehicles/+/data';
-
-// Private IP of SmartCommute-DB-Server instance.
 const MONGO_URL = process.env.MONGO_URL || 'mongodb://mongo-db:27017';
 const DB_NAME = 'smartcommute';
 const COLLECTION_NAME = 'vehicle_state';
@@ -31,19 +29,16 @@ async function main() {
         });
     });
 
-    // This function is triggered every time a message is received
     mqttClient.on('message', async (topic, message) => {
         try {
             const vehicleData = JSON.parse(message.toString());
             const vehicleId = vehicleData.vehicleId;
 
-            // Use 'updateOne' with 'upsert' to efficiently insert or update the vehicle's state
             await collection.updateOne(
-                { vehicleId: vehicleId }, // The document to find
-                { $set: vehicleData },   // The new data
-                { upsert: true }         // If it doesn't exist, create it
+                { vehicleId: vehicleId }, 
+                { $set: vehicleData },  
+                { upsert: true }         
             );
-            // console.log(`Processed update for ${vehicleId}`); // Uncomment for verbose logging
 
         } catch (e) {
             console.error('Processing Service: Failed to process message:', e);

@@ -4,7 +4,6 @@ const mqtt = require('mqtt');
 const NUM_BUSES = 20; // How many buses to simulate
 const PUBLISH_INTERVAL = 5000; // Publish every 5 seconds
 const brokerUrl = 'mqtt://13.211.219.43:30883';
-
 // Melbourne CBD Coordinates
 const MELB_LAT = -37.8136;
 const MELB_LNG = 144.9631;

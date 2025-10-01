@@ -17,8 +17,6 @@ spec:
         image: 706262410757.dkr.ecr.ap-southeast-2.amazonaws.com/smartcommute-nodered:latest
         imagePullPolicy: Always
         
-        # --- THE FINAL, SIMPLIFIED FIX ---
-        # We directly call the node-red command and pass our flow file as an argument.
         command: ["node-red"]
         args: ["--userDir", "/data", "/config/flows.json"]
 
@@ -27,7 +25,6 @@ spec:
         - containerPort: 1880
         
         volumeMounts:
-        # Mount the flows.json file from the ConfigMap to a clean, predictable path.
         - name: flows-config-volume
           mountPath: /config/flows.json
           subPath: flows.json

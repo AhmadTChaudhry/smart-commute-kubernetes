@@ -6,7 +6,7 @@ services:
       - "3000:3000"
     depends_on:
       mongo-db:
-        condition: service_healthy # This now waits for the health check to pass
+        condition: service_healthy 
     environment:
       - MONGO_URL=mongodb://mongo-db:27017
 
@@ -17,28 +17,28 @@ services:
       mongo-db:
         condition: service_healthy
       node-red:
-        condition: service_started # No easy healthcheck for MQTT, so we wait for start
+        condition: service_started 
     environment:
       - MONGO_URL=mongodb://mongo-db:27017
       - MQTT_BROKER_URL=mqtt://node-red:1883
 
-  # The Node-RED MQTT Broker - Now built from a custom Dockerfile
+  # The Node-RED MQTT Broker
   node-red:
-    build: ./node-red  # <-- CHANGED: Build our custom image
+    build: ./node-red  
     ports:
       - "1883:1883"
       - "1880:1880"
     volumes:
-      - node-red-data:/data # <-- IMPROVED: Using a named volume for consistency
+      - node-red-data:/data 
 
-  # The MongoDB Database - Now with a healthcheck
+  # The MongoDB Database 
   mongo-db:
     image: mongo:latest
     ports:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
-    healthcheck: # <-- ADDED: Healthcheck to ensure MongoDB is ready
+    healthcheck: 
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s

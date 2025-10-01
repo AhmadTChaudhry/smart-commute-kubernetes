@@ -3,7 +3,6 @@ const http = require('http');
 // --- CONFIGURATION ---
 // Public Load Balancer DNS Name.
 const TARGET_URL = 'http://a555ba35184224fae8c89e39fc56490c-1956333221.ap-southeast-2.elb.amazonaws.com/vehicles';
-
 const CONCURRENT_REQUESTS = 100; // How many requests to send at once
 const TEST_DURATION_MS = 120 * 1000; // Run the test for 2 minutes (120,000 ms)
 // ---------------------

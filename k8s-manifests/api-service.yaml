@@ -14,14 +14,13 @@ spec:
     spec:
       containers:
       - name: api-service
-        image: 706262410757.dkr.ecr.ap-southeast-2.amazonaws.com/smartcommute-api-service:latest # <-- IMPORTANT: REPLACE THIS
+        image: 706262410757.dkr.ecr.ap-southeast-2.amazonaws.com/smartcommute-api-service:latest 
         ports:
         - containerPort: 3000
         env:
           - name: MONGO_URL
             value: "mongodb://mongo-db-service:27017"
         
-        # --- BEST PRACTICES ADDED ---
         resources:
           requests:
             cpu: "100m" # Request 0.1 of a CPU core
@@ -44,10 +43,10 @@ kind: Service
 metadata:
   name: api-service-lb
 spec:
-  type: LoadBalancer # This tells Kubernetes to provision an AWS Load Balancer
+  type: LoadBalancer 
   selector:
     app: api-service
   ports:
     - protocol: TCP
-      port: 80 # The load balancer will listen on public port 80
-      targetPort: 3000 # and forward traffic to the pods' container port 3000
+      port: 80 
+      targetPort: 3000 

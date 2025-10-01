@@ -1,24 +1,20 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: api-service-hpa # A unique name for our HPA object
+  name: api-service-hpa 
 spec:
-  # This section points the HPA to the deployment it should manage.
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
     name: api-service-deployment
 
-  # These are the scaling boundaries.
   minReplicas: 2   # We always want at least 2 pods for high availability.
   maxReplicas: 5   # We will allow it to scale up to a maximum of 5 pods.
 
-  # This is the core logic: the metrics and rules for scaling.
   metrics:
   - type: Resource
     resource:
       name: cpu
-      # The target tells the HPA what to aim for.
       target:
         type: Utilization
         # If the average CPU utilization across all api-service pods

@@ -14,14 +14,13 @@ spec:
     spec:
       containers:
       - name: processing-service
-        image: 706262410757.dkr.ecr.ap-southeast-2.amazonaws.com/smartcommute-processing-service:latest # <-- IMPORTANT: REPLACE THIS
+        image: 706262410757.dkr.ecr.ap-southeast-2.amazonaws.com/smartcommute-processing-service:latest 
         env:
           - name: MONGO_URL
             value: "mongodb://mongo-db-service:27017"
           - name: MQTT_BROKER_URL
             value: "mqtt://node-red-service:1883"
 
-        # --- BEST PRACTICES ADDED ---
         resources:
           requests:
             cpu: "100m"
@@ -30,4 +29,3 @@ spec:
             cpu: "500m"
             memory: "256Mi"
 
-        # Startup probe removed because base image lacks mongosh; app itself logs readiness
